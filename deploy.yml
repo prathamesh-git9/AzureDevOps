@@ -1,0 +1,48 @@
+---
+- name: Set up Docker and Nginx container
+  hosts: aws_servers
+  become: yes
+  tasks:
+    - name: Ensure Python pip is installed
+      yum:
+        name: python3-pip
+        state: present
+
+    - name: Install specific versions of requests and urllib3
+      pip:
+        name:
+          - requests==2.28.1   # Compatible with older urllib3
+          - urllib3==1.26.5    # Compatible with OpenSSL 1.0.2k
+        state: present
+        extra_args: --ignore-installed
+        executable: /usr/bin/pip3
+
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: Pull Nginx Docker image
+      community.docker.docker_image:
+        name: nginx
+        source: pull
+
+    - name: Run Nginx container
+      community.docker.docker_container:
+        name: nginx
+        image: nginx
+        state: started
+        ports:
+          - "80:80"
