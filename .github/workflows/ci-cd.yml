@@ -38,6 +38,9 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
+      - name: IP Output
+        run: terraform output instance_ip
+
       - name: Output EC2 Instance IP
         id: terraform
         run: | 
