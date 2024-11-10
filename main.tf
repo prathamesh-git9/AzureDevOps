@@ -2,6 +2,12 @@ provider "aws" {
   region = "eu-west-1"
 }
 
+variable "vm_ip" {
+  description = "Public IP of the EC2 instance"
+  type        = string
+  default     = ""
+}
+
 # Define a Security Group with a unique name or check if it exists
 
 resource "aws_security_group" "vm_sg" {
@@ -58,8 +64,10 @@ output "vm_ip" {
   value = aws_instance.vm.public_ip
 }
 
+
+
 # Save the public IP to a .txt file on apply
-resource "local_file" "output_ip" {
-  content  = aws_instance.vm.public_ip
-  filename = "${path.module}/vm_ip.txt"
-}
+#resource "local_file" "output_ip" {
+ # content  = aws_instance.vm.public_ip
+ # filename = "${path.module}/vm_ip.txt"
+#}
