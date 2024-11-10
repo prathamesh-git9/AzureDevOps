@@ -38,17 +38,24 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
-      #- name: Get IP
-       # run: terraform output -raw instance_ip
+      - name: Get IP
+        run: terraform output -raw instance_ip
 
-    #  - name: Output EC2 Instance IP
-      #  id: terraform
-      #  run: echo "::set-output name=instance_ip::$(terraform output -raw instance_ip)"
-
-      - name: Run shell script
+      - name: Output EC2 Instance IP
+        id: terraform
         run: |
-            chmod +x update_ip.sh  # Make sure the script is executable
-            ./update_ip.sh  # Run the script
+            echo "::set-output name=instance_ip::$(terraform output -raw instance_ip)"
+
+      #- name: Run shell script
+        #run: |
+           # chmod +x update_ip.sh  # Make sure the script is executable
+           # ./update_ip.sh  # Run the script
+
+      - name: Update ini
+        run: |
+          echo "[aws_servers]" > inventory.ini
+          echo "${{ steps.terraform.outputs.terraform }}"  >> inventory.ini
+          cat inventory.ini
 
   # Ansible Job
   ansible:
