@@ -33,10 +33,10 @@ jobs:
           sudo apt-get install terraform
 
       - name: Initialize Terraform
-        run: terraform init
+        run: terraform -chdir=main/terraform init
 
       - name: Apply Terraform
-        run: terraform apply -auto-approve
+        run: terraform -chdir=main/terraform apply -auto-approve
 
       - name: Output EC2 Instance IP
         id: terraform
