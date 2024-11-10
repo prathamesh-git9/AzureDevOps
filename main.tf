@@ -54,16 +54,6 @@ resource "aws_instance" "vm" {
   }
 }
 
-# Output the public IP of the EC2 instance
-output "vm_details_json" {
-  value = jsonencode({
-    instance_id   = aws_instance.vm.id
-    instance_type = aws_instance.vm.instance_type
-    public_ip     = aws_instance.vm.public_ip
-    private_ip    = aws_instance.vm.private_ip
-    availability_zone = aws_instance.vm.availability_zone
-  })
-
 
 # Save the public IP to a .txt file on apply
 #resource "local_file" "output_ip" {
