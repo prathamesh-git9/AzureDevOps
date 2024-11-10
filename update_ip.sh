@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run Terraform to apply the changes and get the IP output
-terraform apply -auto-approve
+#terraform apply -auto-approve
 
 # Capture the IP address from Terraform's output
 INSTANCE_IP=$(terraform output -raw instance_ip)
