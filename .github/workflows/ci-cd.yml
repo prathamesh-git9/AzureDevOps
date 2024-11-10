@@ -39,10 +39,10 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Get ip 
-        run: terraform output -json instance_ip
+        run: terraform output -raw instance_ip
 
       - name: Apply Terraform
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve > output.log
 
         # Step 5: Retrieve and Parse JSON Output for EC2 Public IP
       - name: Get EC2 Public IP in JSON
