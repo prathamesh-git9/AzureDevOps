@@ -40,18 +40,12 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
-      - name: Download the instance IP from Terraform output
-        uses: actions/download-artifact@v3
+      - name: Upload IP file as artifact
+        uses: actions/upload-artifact@v3
         with:
           name: instance-ip-file
+          path: instance_ip.txt
 
-      - name: Read EC2 Instance IP
-        run: |
-          INSTANCE_IP=$(cat instance_ip.txt)
-          echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
-        #run: |
-           # chmod +x update_ip.sh  # Make sure the script is executable
-           # ./update_ip.sh  # Run the script
   # Ansible Job
   ansible:
     runs-on: ubuntu-latest
@@ -82,14 +76,29 @@ jobs:
           sudo apt update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
+      - name: Download the instance IP from Terraform output
+        uses: actions/download-artifact@v3
+        with:
+          name: instance-ip-file
 
-     # - name: Set up Ansible inventory file
-      #  run: |
-      #    echo "[web]" > inventory.ini
-        #  echo "${{ needs.terraform.outputs.instance_ip }}" >> inventory.ini  # Fetch the IP from Terraform output
+      - name: Read EC2 Instance IP
+        run: |
+          INSTANCE_IP=$(cat instance_ip.txt)
+          echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
 
-      #- name: Run Ansible playbook
-        #run: ansible-playbook -i inventory.ini deploy.yml
+      - name: Set up Ansible inventory file
+        run: |
+          echo "[aws_servers]" > inventory.ini
+          echo "$(cat instance_ip.txt) ansible_user=ec2-user ansible_ssh_private_key_file=my-key-pair.pem ansible_ssh_extra_args='-o StrictHostKeyChecking=no -o KbdInteractiveAuthentication=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no'" >> inventory.ini
+
+      - name: Debug Inventory File (optional)
+        run: cat inventory.ini
+        
+      - name: Set up SSH private key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > my-key-pair.pem
+          chmod 600 my-key-pair.pem  # Set permissions to read-only for the owner
+
 
   # Docker Job
   docker:
