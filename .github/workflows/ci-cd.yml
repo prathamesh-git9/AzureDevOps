@@ -62,12 +62,16 @@ jobs:
       - name: Install Ansible
         run: |
           sudo apt update
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt install -y ansible
+
 
       - name: Install Docker (for running the playbook)
         run: |
           sudo apt update
-          sudo apt install -y docker.io
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
 
       - name: Set up Ansible inventory file
         run: |
@@ -75,7 +79,7 @@ jobs:
           echo "${{ needs.terraform.outputs.instance_ip }}" >> inventory.ini  # Fetch the IP from Terraform output
 
       - name: Run Ansible playbook
-        run: ansible-playbook -i inventory.ini deploy-nginx.yml
+        run: ansible-playbook -i inventory.ini deploy.yml
 
   # Docker Job
   docker:
@@ -90,7 +94,7 @@ jobs:
       - name: Set up Docker
         run: |
           sudo apt update
-          sudo apt install -y docker.io
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
       - name: Build Docker image
         run: |
