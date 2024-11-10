@@ -2,19 +2,14 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-# Define or import the SSH key pair
-#resource "aws_key_pair" "my_key" {
-  #key_name   = "my-key-pair"                             # Name for the key pair in AWS
- #public_key = file("my-key-pair.pub")       # Replace with the actual path to your .pub file
-#}
+# Define a Security Group with a unique name or check if it exists
 
-# Security Group for SSH and HTTP access
 resource "aws_security_group" "vm_sg" {
-  name        = "vm_security_group"
- description = "Allow SSH and HTTP"
+  # Dynamically generate a unique name by using a timestamp to avoid duplicates
+  name        = "vm_security_group_${timestamp()}"
+  description = "Allow SSH and HTTP access"
 
-
-  # Allow SSH
+  # Allow SSH (port 22)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -22,7 +17,7 @@ resource "aws_security_group" "vm_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow HTTP
+  # Allow HTTP (port 80)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -30,6 +25,7 @@ resource "aws_security_group" "vm_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Egress (Allow all outbound traffic)
   egress {
     from_port   = 0
     to_port     = 0
@@ -40,15 +36,16 @@ resource "aws_security_group" "vm_sg" {
 
 # Data source to fetch an existing key pair from your AWS account
 data "aws_key_pair" "existing_key" {
-  key_name = "my-key-pair"  # Replace with your existing key pair name
+  key_name = "my-key-pair"  # Replace with your existing key pair name
 }
 
 # EC2 Instance using the key pair and security group
 resource "aws_instance" "vm" {
-  ami           = "ami-03ca36368dbc9cfa1"    # Ubuntu 18.04 for eu-west-1 (update as needed)
+  ami           = "ami-03ca36368dbc9cfa1"  # Replace with your preferred AMI ID
   instance_type = "t2.micro"
-  key_name      = data.aws_key_pair.existing_key.key_name   # Reference the SSH key pair
+  key_name      = data.aws_key_pair.existing_key.key_name   # Reference the existing key pair
 
+  # Associate the EC2 instance with the security group
   vpc_security_group_ids = [aws_security_group.vm_sg.id]
 
   tags = {
@@ -56,7 +53,7 @@ resource "aws_instance" "vm" {
   }
 }
 
-# Output the public IP of the instance
+# Output the public IP of the EC2 instance
 output "vm_ip" {
   value = aws_instance.vm.public_ip
 }
