@@ -38,8 +38,18 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
-      - name: IP Output
-        run: terraform output -raw instance_ip
+      - name: Get ip 
+        run: terraform output -json instance_ip
+
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+
+        # Step 5: Retrieve and Parse JSON Output for EC2 Public IP
+      - name: Get EC2 Public IP in JSON
+        id: get_ip
+        run: |
+          echo "EC2_PUBLIC_IP_JSON=$IP_JSON" >> $GITHUB_ENV
+          echo "Parsed IP: $(echo $IP_JSON | jq -r '.public_ip')"
 
       - name: Apply Terraform
         run: terraform apply -auto-approve
