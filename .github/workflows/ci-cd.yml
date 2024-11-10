@@ -48,7 +48,7 @@ jobs:
       - name: Run shell script
         run: |
             chmod +x update_ip.sh  # Make sure the script is executable
-            update_ip.sh  # Run the script
+            ./update_ip.sh  # Run the script
 
   # Ansible Job
   ansible:
