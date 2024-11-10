@@ -45,6 +45,9 @@ jobs:
             echo "EC2_PUBLIC_IP=$ip"  >> GITHUB_ENV
             echo "Public IP: $ip"
 
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+
       #- name: Run shell script
         #run: |
            # chmod +x update_ip.sh  # Make sure the script is executable
