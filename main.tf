@@ -47,7 +47,7 @@ data "aws_key_pair" "existing_key" {
 resource "aws_instance" "vm" {
   ami           = "ami-03ca36368dbc9cfa1"    # Ubuntu 18.04 for eu-west-1 (update as needed)
   instance_type = "t2.micro"
-  key_name      = aws_key_pair.my_key.key_name   # Reference the SSH key pair
+  key_name      = data.aws_key_pair.existing_key.key_name   # Reference the SSH key pair
 
   vpc_security_group_ids = [aws_security_group.vm_sg.id]
 
