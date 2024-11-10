@@ -58,24 +58,27 @@ resource "null_resource" "webConf" {
   depends_on = [aws_instance.vm]  # Ensure the instance is ready before running
 
   provisioner "local-exec" {
-    command = "set -x  && echo [aws_servers] > inventory"
+    # Export the path of the SSH key to an environment variable
+    command = "export SSH_KEY_PATH=my-key-pair.pem && echo [aws_servers] > inventory"
   }
 
   provisioner "local-exec" {
-    command = "set -x  && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=${data.aws_key_pair.existing_key} >> inventory"
+    # Use the environment variable for the SSH key path
+    command = "set -x && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=${env.SSH_KEY_PATH} >> inventory"
   }
 
   provisioner "local-exec" {
-    # Run Ansible playbook, remove unsupported flags if necessary
+    # Run Ansible playbook
     command = "ansible-playbook deploy.yml -i inventory"
   }
 
   provisioner "local-exec" {
     # Check the application by curling the public IP
     command = "curl http://${aws_instance.vm.public_ip}"
-    on_failure = continue
+    on_failure = "continue"
   }
 }
+
 
 
 output "vm_ip" {
