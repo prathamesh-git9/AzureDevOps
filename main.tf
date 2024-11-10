@@ -9,9 +9,15 @@ resource "aws_key_pair" "my_key" {
 }
 
 # Security Group for SSH and HTTP access
-resource "aws_security_group" "vm_sg" {
-  name        = "vm_security_group"
-  description = "Allow SSH and HTTP"
+#resource "aws_security_group" "vm_sg" {
+  #name        = "vm_security_group"
+ #description = "Allow SSH and HTTP"
+
+# Data source to fetch an existing key pair from your AWS account
+data "aws_key_pair" "existing_key" {
+  key_name = "aws-key-pair"  # Replace with your existing key pair name
+}
+
 
   # Allow SSH
   ingress {
