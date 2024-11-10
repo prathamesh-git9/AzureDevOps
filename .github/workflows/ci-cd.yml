@@ -40,12 +40,11 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
-      - name: Upload IP file as artifact
+      - name: Upload instance IP file as artifact
         uses: actions/upload-artifact@v3
         with:
           name: instance-ip-file
           path: instance_ip.txt
-
   # Ansible Job
   ansible:
     runs-on: ubuntu-latest
@@ -76,15 +75,15 @@ jobs:
           sudo apt update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      #- name: Download the instance IP from Terraform output
-      #  uses: actions/download-artifact@v3
-      # with:
-       #   name: instance-ip-file
-       #   path: instance_ip.txt
+      - name: Download instance IP file
+        uses: actions/download-artifact@v3
+        with:
+          name: instance-ip-file
+          path: ./downloaded
 
       - name: Read EC2 Instance IP
         run: |
-          INSTANCE_IP=$(cat instance_ip.txt)
+          INSTANCE_IP=$(cat ./downloaded/instance_ip.txt)
           echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
 
       - name: Set up Ansible inventory file
