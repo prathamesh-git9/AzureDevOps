@@ -59,12 +59,26 @@ resource "null_resource" "webConf" {
 
   provisioner "local-exec" {
     # Export the path of the SSH key to an environment variable
-    command = "export SSH_KEY_PATH=my-key-pair.pem && echo [aws_servers] > inventory"
+    command = "echo [aws_servers] > inventory"
   }
 
   provisioner "local-exec" {
     # Use the environment variable for the SSH key path
-    command = "set -x && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=${env.SSH_KEY_PATH} >> inventory"
+    command = "echo "$(cat instance_ip.txt) ansible_user=ubuntu ansible_ssh_private_key_file=my-key-pair.pem ansible_ssh_extra_args='-o StrictHostKeyChecking=no -o KbdInteractiveAuthentication=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no'" >> inventory.ini"
+  }
+
+provisioner "local-exec" {
+    # Use the environment variable for the SSH key path
+    command = "cat inventory.ini"
+  }
+
+provisioner "local-exec" {
+    # Use the environment variable for the SSH key path
+    command = "echo "${{ secrets.SSH_KEY }}" > my-key-pair.pem"
+  }
+provisioner "local-exec" {
+    # Use the environment variable for the SSH key path
+    command = "chmod 600 my-key-pair.pem "  # Set permissions to read-only for the owner
   }
 
   provisioner "local-exec" {
