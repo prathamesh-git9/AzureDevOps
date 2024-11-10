@@ -25,15 +25,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Download the instance IP from Terraform output
-        uses: actions/download-artifact@v3
-        with:
-          name: instance-ip-file
-
-      - name: Read EC2 Instance IP
-        run: |
-          INSTANCE_IP=$(cat instance_ip.txt)
-          echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
+      
 
       - name: Install Terraform
         run: |
@@ -47,6 +39,16 @@ jobs:
 
       - name: Apply Terraform
         run: terraform apply -auto-approve
+
+      - name: Download the instance IP from Terraform output
+        uses: actions/download-artifact@v3
+        with:
+          name: instance-ip-file
+
+      - name: Read EC2 Instance IP
+        run: |
+          INSTANCE_IP=$(cat instance_ip.txt)
+          echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
         #run: |
            # chmod +x update_ip.sh  # Make sure the script is executable
            # ./update_ip.sh  # Run the script
