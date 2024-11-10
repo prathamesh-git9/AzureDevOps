@@ -1,9 +1,3 @@
-variable "vm_ip" {
-  description = "Public IP of the EC2 instance"
-  type        = string
-  default     = ""
-}
-
 provider "aws" {
   region = "eu-west-1"
 }
