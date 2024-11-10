@@ -5,7 +5,7 @@ provider "aws" {
 # Define or import the SSH key pair
 resource "aws_key_pair" "my_key" {
   key_name   = "my-key-pair"                             # Name for the key pair in AWS
-  public_key = file("~/.ssh/my-key-pair.pub")       # Replace with the actual path to your .pub file
+  public_key = file("my-key-pair.pub")       # Replace with the actual path to your .pub file
 }
 
 # Security Group for SSH and HTTP access
