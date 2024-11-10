@@ -62,7 +62,7 @@ resource "null_resource" "webConf" {
   }
 
   provisioner "local-exec" {
-    command = "set -x  && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=my-key-pair.pem >> inventory"
+    command = "set -x  && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=${data.aws_key_pair.existing_key} >> inventory"
   }
 
   provisioner "local-exec" {
