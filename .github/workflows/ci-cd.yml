@@ -76,11 +76,11 @@ jobs:
           sudo apt update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      - name: Download the instance IP from Terraform output
-        uses: actions/download-artifact@v3
-        with:
-          name: instance-ip-file
-          path: instance_ip.txt
+      #- name: Download the instance IP from Terraform output
+      #  uses: actions/download-artifact@v3
+      # with:
+       #   name: instance-ip-file
+       #   path: instance_ip.txt
 
       - name: Read EC2 Instance IP
         run: |
