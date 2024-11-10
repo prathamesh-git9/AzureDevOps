@@ -98,7 +98,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t nginx-image .
+          docker build -t nginx-image -f Dockerfile .
 
       - name: Run Docker container
         run: |
