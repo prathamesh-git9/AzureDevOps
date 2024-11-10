@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Capture the IP address from Terraform output
-ip_address=$(terraform output -raw instance_ip)
+ip_address=$(terraform output -raw vm_ip)
 
 # Define username and password (you can also fetch them securely from environment variables or secrets manager)
 ansible_user=ec2-user
