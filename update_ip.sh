@@ -9,6 +9,6 @@ ansible_ssh_private_key_file=my-key-pair.pem
 
 # Write or update the .ini file with IP, username, and password
 cat <<EOF > inventory.ini
-[axs_servers]
-ip_address = $ip_address ansible_user = $username ansible_ssh_private_key_file = $password
+[aws_servers]
+ip_address = $ip_address ansible_user = $ansible_user ansible_ssh_private_key_file = $ansible_ssh_private_key_file
 EOF
