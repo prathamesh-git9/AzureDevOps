@@ -54,46 +54,6 @@ resource "aws_instance" "vm" {
   }
 }
 
-resource "null_resource" "webConf" {
-  depends_on = [aws_instance.vm]  # Ensure the instance is ready before running
-
-  provisioner "local-exec" {
-    # Export the path of the SSH key to an environment variable
-    command = "echo [aws_servers] > inventory"
-  }
-
-  provisioner "local-exec" {
-    # Use the environment variable for the SSH key path
-    command = "echo "$(cat instance_ip.txt) ansible_user=ubuntu ansible_ssh_private_key_file=my-key-pair.pem ansible_ssh_extra_args='-o StrictHostKeyChecking=no -o KbdInteractiveAuthentication=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no'" >> inventory.ini"
-  }
-
-provisioner "local-exec" {
-    # Use the environment variable for the SSH key path
-    command = "cat inventory.ini"
-  }
-
-provisioner "local-exec" {
-    # Use the environment variable for the SSH key path
-    command = "echo "${{ secrets.SSH_KEY }}" > my-key-pair.pem"
-  }
-provisioner "local-exec" {
-    # Use the environment variable for the SSH key path
-    command = "chmod 600 my-key-pair.pem "  # Set permissions to read-only for the owner
-  }
-
-  provisioner "local-exec" {
-    # Run Ansible playbook
-    command = "ansible-playbook deploy.yml -i inventory"
-  }
-
-  provisioner "local-exec" {
-    # Check the application by curling the public IP
-    command = "curl http://${aws_instance.vm.public_ip}"
-    on_failure = "continue"
-  }
-}
-
-
 
 output "vm_ip" {
   value = aws_instance.vm.public_ip
