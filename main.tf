@@ -54,6 +54,26 @@ resource "aws_instance" "vm" {
   }
 }
 
+resource "null_resource" "webConf" {
+
+  provisioner "local-exec" {
+    command = "echo [aws_servers] > inventory"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=my-key-pair.pem >> inventory"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook run deploy.yml -i inventory --ee false --mode stdout"
+  }
+
+  provisioner "local-exec" {
+    command = "curl http://${aws_instance.vm.public_ip}"
+  }
+}
+
+
 output "vm_ip" {
   value = aws_instance.vm.public_ip
 }
