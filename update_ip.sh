@@ -1,14 +1,17 @@
 #!/bin/bash
 
-# Capture the IP address from Terraform output
-ip_address=$(terraform output -raw vm_ip)
+# Get the public IP of the EC2 instance from Terraform output
+INSTANCE_IP=$(terraform output -raw vm_ip)
 
-# Define username and password (you can also fetch them securely from environment variables or secrets manager)
-ansible_user=ec2-user
-ansible_ssh_private_key_file=my-key-pair.pem
+# Check if the IP is available
+if [ -z "$INSTANCE_IP" ]; then
+  echo "Error: EC2 instance IP is not available."
+  exit 1
+fi
 
-# Write or update the .ini file with IP, username, and password
-cat <<EOF > inventory.ini
-[aws_servers]
-ip_address = $ip_address ansible_user = $ansible_user ansible_ssh_private_key_file = $ansible_ssh_private_key_file
-EOF
+# Save the IP to a text file for use by other jobs
+echo "$INSTANCE_IP" > instance_ip.txt
+echo "EC2 Instance IP: $INSTANCE_IP"
+
+# Export the IP for use in subsequent steps
+export INSTANCE_IP
