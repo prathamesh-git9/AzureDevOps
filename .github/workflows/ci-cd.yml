@@ -54,7 +54,7 @@ jobs:
       - name: Update ini
         run: |
           echo "[aws_servers]" > inventory.ini
-          echo "${{ steps.terraform.outputs.terraform }}"  >> inventory.ini
+          echo "${{ steps.terraform.outputs.instance_ip }}"  >> inventory.ini
           cat inventory.ini
 
   # Ansible Job
@@ -88,10 +88,10 @@ jobs:
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 
-      - name: Set up Ansible inventory file
-        run: |
-          echo "[web]" > inventory.ini
-          echo "${{ needs.terraform.outputs.instance_ip }}" >> inventory.ini  # Fetch the IP from Terraform output
+     # - name: Set up Ansible inventory file
+      #  run: |
+      #    echo "[web]" > inventory.ini
+        #  echo "${{ needs.terraform.outputs.instance_ip }}" >> inventory.ini  # Fetch the IP from Terraform output
 
       - name: Run Ansible playbook
         run: ansible-playbook -i inventory.ini deploy.yml
