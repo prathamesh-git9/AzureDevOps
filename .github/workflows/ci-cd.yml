@@ -40,8 +40,9 @@ jobs:
 
       - name: Output EC2 Instance IP
         id: terraform
-        run: |
+        run: | 
             ip=$(terraform output -raw instance_ip)
+            terraform apply -auto-approve
             echo "EC2_PUBLIC_IP=$ip"  >> GITHUB_ENV
             echo "Public IP: $ip"
 
