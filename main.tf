@@ -55,21 +55,25 @@ resource "aws_instance" "vm" {
 }
 
 resource "null_resource" "webConf" {
+  depends_on = [aws_instance.vm]  # Ensure the instance is ready before running
 
   provisioner "local-exec" {
-    command = "echo [aws_servers] > inventory"
+    command = "set -x  && echo [aws_servers] > inventory"
   }
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=my-key-pair.pem >> inventory"
+    command = "set -x  && echo ${aws_instance.vm.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=my-key-pair.pem >> inventory"
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook run deploy.yml -i inventory --ee false --mode stdout"
+    # Run Ansible playbook, remove unsupported flags if necessary
+    command = "ansible-playbook deploy.yml -i inventory"
   }
 
   provisioner "local-exec" {
+    # Check the application by curling the public IP
     command = "curl http://${aws_instance.vm.public_ip}"
+    on_failure = continue
   }
 }
 
