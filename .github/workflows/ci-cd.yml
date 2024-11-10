@@ -40,6 +40,10 @@ jobs:
       - name: Apply Terraform
         run: terraform apply -auto-approve
 
+      - name: Output EC2 ip to file 
+        run: |
+           terraform output -raw vm_ip > instance_ip.txt
+
       - name: Upload instance IP file as artifact
         uses: actions/upload-artifact@v3
         with:
