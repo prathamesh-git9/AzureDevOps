@@ -25,6 +25,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Download the instance IP from Terraform output
+        uses: actions/download-artifact@v3
+        with:
+          name: instance-ip-file
+
+      - name: Read EC2 Instance IP
+        run: |
+          INSTANCE_IP=$(cat instance_ip.txt)
+          echo "EC2 Instance IP: $INSTANCE_IP"  # Debugging output to check the IP
+
       - name: Install Terraform
         run: |
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
@@ -76,8 +86,8 @@ jobs:
       #    echo "[web]" > inventory.ini
         #  echo "${{ needs.terraform.outputs.instance_ip }}" >> inventory.ini  # Fetch the IP from Terraform output
 
-      - name: Run Ansible playbook
-        run: ansible-playbook -i inventory.ini deploy.yml
+      #- name: Run Ansible playbook
+        #run: ansible-playbook -i inventory.ini deploy.yml
 
   # Docker Job
   docker:
