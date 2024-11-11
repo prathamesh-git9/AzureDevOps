@@ -1,10 +1,8 @@
 provider "aws" {
-  region = "eu-west-1"
+  region = "eu-west-1"  # Change to your desired AWS region
 }
 
-
 # Define a Security Group with a unique name or check if it exists
-
 resource "aws_security_group" "vm_sg" {
   # Dynamically generate a unique name by using a timestamp to avoid duplicates
   name        = "vm_security_group_${timestamp()}"
@@ -42,10 +40,11 @@ data "aws_key_pair" "existing_key" {
 
 # EC2 Instance using the key pair and security group
 resource "aws_instance" "vm" {
-  ami           = "ami-03ca36368dbc9cfa1"    # Ubuntu 18.04 for eu-west-1 (update as needed)
+  ami           = "ami-0d64bb532e0502c46"  # Replace with your preferred AMI ID
   instance_type = "t2.micro"
-  key_name      = aws_key_pair.existing_key.key_name   # Reference the SSH key pair
+  key_name      = data.aws_key_pair.existing_key.key_name   # Reference the existing key pair
 
+  # Associate the EC2 instance with the security group
   vpc_security_group_ids = [aws_security_group.vm_sg.id]
 
   tags = {
@@ -53,10 +52,12 @@ resource "aws_instance" "vm" {
   }
 }
 
+# Output the public IP of the EC2 instance
 output "vm_ip" {
   value = aws_instance.vm.public_ip
 }
 
+# Save the public IP to a .txt file on apply
 resource "local_file" "output_ip" {
   content  = aws_instance.vm.public_ip
   filename = "${path.module}/vm_ip.txt"
