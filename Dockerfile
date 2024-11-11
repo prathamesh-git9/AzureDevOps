@@ -1,8 +1,5 @@
-resource "docker_image" "custom_image" {
-  name = "my_custom_image:latest"
+# Use the official NGINX image as the base
+FROM nginx:latest
 
-  build {
-    context    = "${path.module}/path/to/dockerfile-directory"
-    dockerfile = "Dockerfile"
-  }
-}
+# Copy custom files into the default HTML directory
+COPY . /usr/share/nginx/html
