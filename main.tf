@@ -73,7 +73,7 @@ output "vm_ip" {
   value = aws_instance.vm.public_ip
 }
 
-# Save the public IP to a .txt file on apply
+# Save the public IP to a .txt file on apply knkckn
 resource "local_file" "output_ip" {
   content  = aws_instance.vm.public_ip
   filename = "${path.module}/vm_ip.txt"
