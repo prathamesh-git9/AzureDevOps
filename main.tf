@@ -40,6 +40,42 @@ data "aws_key_pair" "existing_key" {
   key_name = "my-key-pair"  # Replace with your existing key pair name
 }
 
+d Containers in main.tf
+hcl
+Copy code
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.0"
+    }
+  }
+}
+
+provider "docker" {}
+
+# Pull an Image from Docker Hub
+resource "docker_image" "nginx" {
+  name = "nginx:latest"
+  keep_locally = false  # Set to true if you want to keep it after the container is deleted
+}
+
+# Define a Container that Uses the Pulled Image
+resource "docker_container" "nginx_container" {
+  image = docker_image.nginx.latest
+  name  = "my-nginx-container"
+
+  ports {
+    internal = 80
+    external = 8080
+  }
+}
+
+# Output the container's IP address
+output "nginx_container_ip" {
+  value = docker_container.nginx_container.ip_address
+}
+
 # EC2 Instance using the key pair and security group
 resource "aws_instance" "vm" {
   ami           = "ami-03ca36368dbc9cfa1"  # Replace with your preferred AMI ID
