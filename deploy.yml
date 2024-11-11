@@ -64,12 +64,26 @@
       community.docker.docker_image:
         name: nginx
         source: pull
+        
+ # Create a directory on the host for the Nginx content
+    - name: Create a directory for index.html
+      file:
+        path: /home/ubuntu/nginx-html
+        state: directory
 
-    # Run Nginx container
-    - name: Run Nginx container
+    # Copy index.html from the local machine (adjust path if necessary)
+    - name: Copy index.html to Nginx directory
+      copy:
+        src: ./index.html  # Path to your local index.html file
+        dest: /home/ubuntu/nginx-html/index.html
+
+    # Run Nginx container with the custom index.html file
+    - name: Run Nginx container with custom index.html
       community.docker.docker_container:
         name: nginx
         image: nginx
         state: started
         ports:
           - "80:80"
+        volumes:
+          - /home/ubuntu/nginx-html:/usr/share/nginx/html:ro  # Mount the local directory to Nginx HTML directory
