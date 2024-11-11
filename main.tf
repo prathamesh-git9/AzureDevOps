@@ -40,9 +40,7 @@ data "aws_key_pair" "existing_key" {
   key_name = "my-key-pair"  # Replace with your existing key pair name
 }
 
-d Containers in main.tf
-hcl
-Copy code
+
 terraform {
   required_providers {
     docker = {
