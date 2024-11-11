@@ -102,7 +102,10 @@ jobs:
         run: |
           echo "${{ secrets.SSH_KEY }}" > my-key-pair.pem
           chmod 600 my-key-pair.pem  # Set permissions to read-only for the owner
-
+          
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i inventory.ini deploy-docker.yml
 
   # Docker Job
   docker:
