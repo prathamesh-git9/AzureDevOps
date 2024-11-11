@@ -124,7 +124,7 @@ jobs:
 
       - name: SSH into EC2 and run Docker commands
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.AWS_SSH_KEY }} ubuntu@${{ steps.terraform.outputs.instance_ip }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.AWS_SSH_KEY }} ec2-user@${{ steps.terraform.outputs.instance_ip }} << 'EOF'
             # Pull the Docker image if needed (e.g., from Docker Hub or local registry)
             docker pull nginx:latest
             
