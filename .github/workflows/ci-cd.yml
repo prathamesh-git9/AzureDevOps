@@ -119,10 +119,23 @@ jobs:
           sudo apt update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      - name: Build Docker image
-        run: |
-          docker build -t nginx-image -f Dockerfile .
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
 
-      - name: Run Docker container
+      - name: SSH into EC2 and run Docker commands
         run: |
-          docker run -d -p 80:80 nginx-image
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.AWS_SSH_KEY }} ubuntu@${{ steps.terraform.outputs.instance_ip }} << 'EOF'
+            # Pull the Docker image if needed (e.g., from Docker Hub or local registry)
+            docker pull nginx:latest
+            
+            # Run the Docker container
+            docker run -d -p 80:80 nginx:latest
+          EOF
+
+     # - name: Build Docker image
+      #  run: |
+     #     docker build -t nginx-image -f Dockerfile .
+
+    #  - name: Run Docker container
+     #   run: |
+     #     docker run -d -p 80:80 nginx-image
