@@ -40,6 +40,18 @@ data "aws_key_pair" "existing_key" {
   key_name = "my-key-pair"  # Replace with your existing key pair name
 }
 
+# EC2 Instance using the key pair and security group
+resource "aws_instance" "vm" {
+  ami           = "ami-03ca36368dbc9cfa1"    # Ubuntu 18.04 for eu-west-1 (update as needed)
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.my_key.key_name   # Reference the SSH key pair
+
+  vpc_security_group_ids = [aws_security_group.vm_sg.id]
+
+  tags = {
+    Name = "TerraformVM"
+  }
+}
 
 output "vm_ip" {
   value = aws_instance.vm.public_ip
