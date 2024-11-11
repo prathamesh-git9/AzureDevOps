@@ -58,7 +58,7 @@ data "aws_key_pair" "existing_key" {
 # EC2 Instance using the key pair and security group
 resource "aws_instance" "vm" {
   ami           = "ami-0917d3c16c89e5dc3"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   key_name      = data.aws_key_pair.existing_key.key_name
 
   vpc_security_group_ids = [aws_security_group.vm_sg.id]
