@@ -105,7 +105,7 @@ jobs:
           
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -i inventory.ini deploy-docker.yml
+          ansible-playbook -i inventory.ini deploy.yml
 
   # Docker Job
  # docker:
