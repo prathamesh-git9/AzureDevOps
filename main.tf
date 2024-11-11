@@ -62,3 +62,8 @@ resource "local_file" "output_ip" {
   content  = aws_instance.vm.public_ip
   filename = "${path.module}/vm_ip.txt"
 }
+
+# Docker Image Resource
+resource "docker_image" "nginx_image" {
+  name = "nginx:latest"
+}
