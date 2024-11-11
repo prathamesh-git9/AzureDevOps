@@ -1,14 +1,33 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.0"
+    }
+  }
+}
+
 provider "aws" {
-  region = "eu-west-1"  # Change to your desired AWS region
+  region = "eu-west-1"
+}
+
+provider "docker" {
+  host = "unix:///var/run/docker.sock"
 }
 
 # Define a Security Group with a unique name or check if it exists
 resource "aws_security_group" "vm_sg" {
-  # Dynamically generate a unique name by using a timestamp to avoid duplicates
   name        = "vm_security_group_${timestamp()}"
   description = "Allow SSH and HTTP access"
 
-  # Allow SSH (port 22)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -16,7 +35,6 @@ resource "aws_security_group" "vm_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow HTTP (port 80)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -24,7 +42,6 @@ resource "aws_security_group" "vm_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Egress (Allow all outbound traffic)
   egress {
     from_port   = 0
     to_port     = 0
@@ -35,16 +52,15 @@ resource "aws_security_group" "vm_sg" {
 
 # Data source to fetch an existing key pair from your AWS account
 data "aws_key_pair" "existing_key" {
-  key_name = "my-key-pair"  # Replace with your existing key pair name
+  key_name = "my-key-pair"
 }
 
 # EC2 Instance using the key pair and security group
 resource "aws_instance" "vm" {
-  ami           = "ami-0d64bb532e0502c46"  # Replace with your preferred AMI ID
+  ami           = "ami-0d64bb532e0502c46"
   instance_type = "t2.micro"
-  key_name      = data.aws_key_pair.existing_key.key_name   # Reference the existing key pair
+  key_name      = data.aws_key_pair.existing_key.key_name
 
-  # Associate the EC2 instance with the security group
   vpc_security_group_ids = [aws_security_group.vm_sg.id]
 
   tags = {
