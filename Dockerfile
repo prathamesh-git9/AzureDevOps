@@ -1,5 +1,8 @@
-# Use the official NGINX image as the base
+# Dockerfile
 FROM nginx:latest
 
-# Copy custom files into the default HTML directory
+# Copy content to serve
 COPY . /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
